@@ -1,5 +1,4 @@
 /* Mason Collett - CS344 Assignment 3 - smallsh
-*  2/6/2021
 */
 
 #include <stdio.h>
@@ -14,9 +13,6 @@
 
 /*
 * Function to replace all instances of $$ with the pid
-* Implemented with help from: 
-* https://stackoverflow.com/questions/779875/what-function-is-to-replace-a-substring-from-a-string-in-c
-* Only works for replacing $$ at the end of a string :/
 */
 char *str_replace(char *orig, char *rep, char *with) {
 	int i;
@@ -30,7 +26,6 @@ char *str_replace(char *orig, char *rep, char *with) {
 	return orig;
 }
 
-// global variable okay'ed on piazza
 int fg = 0;
 
 void catch_signal() {					
@@ -132,34 +127,18 @@ void main(int argc, char* argv[])
 		}
 
 		// check for background process, remove it from the array
-		// tried multiple ways of "deleting" the last element from the 
-		// array- tried copying it to another array.  ended up being able
-		// to just say 'last value = null', which i had tried and didn't work.
-		// so anyways, most of this can probably be deleted, but i'm too scared to
-		// break anything at this point.
 		if(strcmp(commandList[count-1],"&") == 0){
-			int i = 0;
-			for(i = 0; i < count-1 ; i++){
-				otherCommandList[i] = commandList[i];
-			}
-			otherCommandList[count-1] = '\0'; // place the null terminator
 			commandList[count-1] = NULL;  // this is the only line that matters
 			is_bg = 1; // and this one
 		}
 		else {
 			is_bg = 0;
 		}
-		// if nothing wa entered, set it to null
-		// any other way of handling this didn't work
+		// if nothing was entered, set it to null
 		if (user_input[0] == '\n'){								
 			commandList[0] = NULL;
 		}
-
-		// print command list for debugging
-		// for(i = 0; i<count; i++){
-		// 	printf("commandlist: %s\n",commandList[i]);
-		// }
-
+	    
 		// now actually do stuff with the commands
 		// check to make sure not a comment 
 		if(commandList[0] != NULL){
@@ -198,10 +177,7 @@ void main(int argc, char* argv[])
 
 				// all other commands:
 				else{
-					// implemented with help from lecture
-					// https://oregonstate.instructure.com/courses/1798831/pages/exploration-process-api-executing-a-new-program?module_item_id=20163875
 					int result;
-
 					// fork new process
 					spawnPid = fork();
 
@@ -222,7 +198,6 @@ void main(int argc, char* argv[])
 							}
 
 							// check for input file
-							// https://repl.it/@cs344/54sortViaFilesc
 							if(strlen(infile) != 0){
 								int sourceFD = open(infile, O_RDONLY);
 								if (sourceFD == -1) { 
@@ -238,7 +213,6 @@ void main(int argc, char* argv[])
 								fcntl(sourceFD, F_SETFD, FD_CLOEXEC);
 							}
 							// check for output file
-							// https://repl.it/@cs344/54sortViaFilesc
 							if(strlen(outfile)!= 0){
 								int targetFD = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 								if (targetFD == -1) { 
@@ -291,15 +265,6 @@ void main(int argc, char* argv[])
 					}
 				}
 
-				// for (i=0; commandList[i]; i++) {
-				// 	commandList[i] = NULL;
-				// }
-				// // printf("command list at end\n");
-				// // fflush(stdout);
-				// // for (i=0; i<count; i++) {
-				// // 	printf("command: %s\n",commandList[i]);
-				// // 	fflush(stdout);
-				// // }
 			}
 			for (i=0; commandList[i]; i++) {
 				commandList[i] = NULL;
